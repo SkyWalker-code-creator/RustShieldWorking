@@ -52,16 +52,9 @@
 ## 🛠️ Сборка из исходников
 
 ```bash
-# Клонируйте репозиторий
 git clone https://github.com/SkyWalker-code-creator/RustShieldWorking.git
-
-# Перейдите в папку
 cd RustShieldWorking
-
-# Соберите проект
 dotnet build
-
-# Запустите
 dotnet run
 📝 Форматы отчётов
 JSON — для программной обработки
