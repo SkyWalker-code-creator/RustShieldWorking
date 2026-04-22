@@ -75,14 +75,10 @@
 
 ---
 
-## 📸 Скриншоты
-
-<div align="center">
-
 <div align="center">
   <img src="https://i.postimg.cc/X71G97y8/image.png" width="80%">
   <br>
-  <em>Главное окно RustShield Working</em>
+  <strong>🛡️ RustShield Working - Главное окно</strong>
 </div>
 
 </div>
