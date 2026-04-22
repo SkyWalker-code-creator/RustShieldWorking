@@ -75,16 +75,6 @@
 
 ---
 
-<div align="center">
-  <img src="https://i.postimg.cc/X71G97y8/image.png" width="80%">
-  <br>
-  <strong>🛡️ RustShield Working - Главное окно</strong>
-</div>
-
-</div>
-
----
-
 ## 🚀 Быстрый старт
 
 ### Установка за 30 секунд
