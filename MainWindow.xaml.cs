@@ -7,8 +7,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Management;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -122,14 +122,18 @@ namespace RustShieldNew
         private int _totalItemsToScan = 0;
 
         // ==================== КОНСТРУКТОР ====================
+
         public MainWindow()
-        {
-            InitializeComponent();
-            InitializeTimers();
-            Loaded += MainWindow_Loaded;
-            Closing += MainWindow_Closing;
-            ThreatsGrid.ItemsSource = ThreatsCollection;
-        }
+{
+    InitializeComponent();
+    UpdateScanProgressText("Готов");
+    InitializeTimers();
+    Loaded += MainWindow_Loaded;
+    Closing += MainWindow_Closing;
+
+//    ThreatsGrid.ItemsSource = ThreatsCollection; // Подключаем таблицу угроз
+//    Task.Run(() => UpdateProcessCountCard());    // Обновляем счётчик процессов
+}
 
         private void InitializeTimers()
         {
@@ -223,7 +227,7 @@ namespace RustShieldNew
             await Task.Run(() =>
             {
                 int count = Process.GetProcesses().Length;
-                Dispatcher.Invoke(() => ProcessesCount.Text = $"Процессы: {count}");
+//                Dispatcher.Invoke(() => ProcessesCount.Text = $"Процессы: {count}");
             });
         }
 
@@ -243,8 +247,8 @@ namespace RustShieldNew
                     
                     Dispatcher.Invoke(() =>
                     {
-                        CpuText.Text = $"CPU: {cpu:F0}%";
-                        RamText.Text = $"RAM: {usedRam:F0}/{totalRam:F0} MB";
+//                        CpuText.Text = $"CPU: {cpu:F0}%";
+//                        RamText.Text = $"RAM: {usedRam:F0}/{totalRam:F0} MB";
                     });
                 }
                 catch { }
@@ -264,69 +268,24 @@ namespace RustShieldNew
         }
 
         // ==================== ЛОГГИРОВАНИЕ С ИКОНКАМИ ====================
-        private void Log(string category, string message)
+private void Log(string category, string message)
+{
+    Dispatcher.Invoke(() =>
+    {
+        string timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
+        string formattedMessage = $"[{timestamp}] [{category}] {message}\n";
+        LogBox.AppendText(formattedMessage);
+        
+        if (LogBox.LineCount > 5000)
         {
-            Dispatcher.Invoke(() =>
-            {
-                string timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
-                string icon = category switch
-                {
-                    "СИСТЕМА" => "🖥️",
-                    "ПРОЦЕССЫ" => "⚙️",
-                    "МОДУЛИ" => "📦",
-                    "TEMP" => "📁",
-                    "APPDATA" => "📂",
-                    "РЕЕСТР" => "🔑",
-                    "USB" => "🔌",
-                    "ACTIVITY" => "📊",
-                    "JUMPLISTS" => "📋",
-                    "SHELLBAG" => "🗂️",
-                    "STARTUP" => "🚀",
-                    "СЛУЖБЫ" => "⚙️",
-                    "СЕТЬ" => "🌐",
-                    "ЗАДАНИЯ" => "⏰",
-                    "БРАУЗЕР" => "🌍",
-                    "HOSTS" => "📄",
-                    "PREFETCH" => "⚡",
-                    "СОБЫТИЯ" => "📜",
-                    "ПРОГРАММЫ" => "📦",
-                    "ДРАЙВЕРЫ" => "🔧",
-                    "WINLOGON" => "🔐",
-                    "WMI" => "🔮",
-                    "DNS" => "🌐",
-                    "ПОРТЫ" => "🔌",
-                    "ПАМЯТЬ" => "🧠",
-                    "КЭШ" => "💾",
-                    "LSA" => "🔒",
-                    "DLL" => "📚",
-                    "STARTUP_ALL" => "👥",
-                    "UAC" => "🛡️",
-                    "АВ" => "🦠",
-                    "FIREWALL" => "🔥",
-                    "RDP" => "📡",
-                    "UPTIME" => "⏱️",
-                    "УГРОЗА" => "⚠️",
-                    "TELEGRAM" => "📨",
-                    "ОШИБКА" => "❌",
-                    "СКАН" => "🔍",
-                    "ОТЧЁТ" => "📄",
-                    _ => "📌"
-                };
-                
-                string formattedMessage = $"[{timestamp}] {icon} [{category}] {message}";
-                LogBox.AppendText(formattedMessage + Environment.NewLine);
-                
-                // Ограничиваем лог 5000 строками для производительности
-                if (LogBox.LineCount > 5000)
-                {
-                    var lines = LogBox.Text.Split('\n').Skip(1000).ToArray();
-                    LogBox.Text = string.Join("\n", lines);
-                }
-                
-                if (AutoScrollCheck.IsChecked == true)
-                    LogBox.ScrollToEnd();
-            });
+            var lines = LogBox.Text.Split('\n').Skip(1000).ToArray();
+            LogBox.Text = string.Join("\n", lines);
         }
+        
+        if (AutoScrollCheck.IsChecked == true)
+            LogBox.ScrollToEnd();
+    });
+}
 
         private void ClearLog_Click(object sender, RoutedEventArgs e) => LogBox.Clear();
 
@@ -347,18 +306,20 @@ namespace RustShieldNew
         }
 
         // ==================== ОБРАТНАЯ СВЯЗЬ ====================
-        private void FeedbackBtn_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show(
-                "👨‍💻 РАЗРАБОТЧИК: SkyWalker\n\n" +
-                "📱 Telegram: @Loksimen\n" +
-                "🎮 Discord: maks8013\n\n" +
-                "По всем вопросам обращайтесь!\n" +
-                "Баги, предложения, сотрудничество - пишите!",
-                "📞 ОБРАТНАЯ СВЯЗЬ",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
+
+// Переключение на страницу "О программе"
+private void FeedbackBtn_Click(object sender, RoutedEventArgs e)
+{
+    MainPage.Visibility = Visibility.Collapsed;
+    AboutPage.Visibility = Visibility.Visible;
+}
+
+// Кнопка "Назад" на главную страницу
+private void BackBtn_Click(object sender, RoutedEventArgs e)
+{
+    AboutPage.Visibility = Visibility.Collapsed;
+    MainPage.Visibility = Visibility.Visible;
+}
 
         // ==================== СКАНИРОВАНИЕ ====================
         private async void QuickScan_Click(object sender, RoutedEventArgs e) => await StartScan("БЫСТРАЯ");
@@ -374,6 +335,7 @@ namespace RustShieldNew
             LockUI(true);
             ShowProgress(true);
             _scanStopwatch.Restart();
+            UpdateScanDuration();
             _scannedItems = 0;
             
             // Очистка коллекций
@@ -402,9 +364,9 @@ namespace RustShieldNew
             
             Dispatcher.Invoke(() => 
             {
-                ThreatsCount.Text = "Угроз: 0";
-                ScanTimeText.Text = "Сканирование...";
-                ScanProgressText.Text = "Подготовка...";
+//                ThreatsCount.Text = "Угроз: 0";
+//                ScanTimeText.Text = "Сканирование...";
+//                ScanProgressText.Text = "Подготовка...";
             });
             
             StatusText.Text = "СКАНИРОВАНИЕ";
@@ -541,7 +503,7 @@ namespace RustShieldNew
             {
                 LockUI(false);
                 ShowProgress(false);
-                Dispatcher.Invoke(() => ScanProgressText.Text = "Готов");
+//                Dispatcher.Invoke(() => ScanProgressText.Text = "Готов");
             }
         }
                 // ==================== ПРОЦЕССЫ ====================
@@ -2316,7 +2278,7 @@ namespace RustShieldNew
                     Timestamp = DateTime.Now
                 });
                 
-                ThreatsCount.Text = $"Угроз: {_totalThreats}";
+//                ThreatsCount.Text = $"Угроз: {_totalThreats}";
                 
                 string severityIcon = severity switch
                 {
@@ -2333,27 +2295,37 @@ namespace RustShieldNew
         }
 
         // ==================== ОБНОВЛЕНИЕ ПРОГРЕССА ====================
-        private void UpdateProgress(int percent, int max, string message)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                MainProgress.Maximum = max;
-                MainProgress.Value = percent;
-                StatusSubText.Text = message;
-                ScanProgressText.Text = message;
-            });
-        }
+private void UpdateProgress(int percent, int max, string message)
+{
+    Dispatcher.Invoke(() =>
+    {
+        MainProgress.Maximum = max;
+        MainProgress.Value = percent;
+        StatusSubText.Text = message;
+        UpdateScanDuration();
+    });
+}
+private void LockUI(bool locked)
+{
+    Dispatcher.Invoke(() =>
+    {
+        QuickScanBtn.IsEnabled = !locked;
+        FullScanBtn.IsEnabled = !locked;
+        DeepScanBtn.IsEnabled = !locked;
+        GenerateReportBtn.IsEnabled = !locked;
 
-        private void LockUI(bool locked)
+        if (locked)
         {
-            Dispatcher.Invoke(() =>
-            {
-                QuickScanBtn.IsEnabled = !locked;
-                FullScanBtn.IsEnabled = !locked;
-                DeepScanBtn.IsEnabled = !locked;
-                SendToTgBtn.IsEnabled = !locked;
-            });
+            Mouse.OverrideCursor = Cursors.Wait;
+            StatusSubText.Text = "Сканирование...";
         }
+        else
+        {
+            Mouse.OverrideCursor = null;
+            StatusSubText.Text = "Готов";
+        }
+    });
+}
 
         private void ShowProgress(bool show)
         {
@@ -2696,20 +2668,20 @@ namespace RustShieldNew
                 if (File.Exists(jsonPath))
                 {
                     var jsonContent = new ByteArrayContent(await File.ReadAllBytesAsync(jsonPath));
-                //                     form.Add(jsonContent, "document", "detailed_report.json"); // �������� ���������������� ��� ����������� ������ CS1503
+                //                     form.Add(jsonContent, "document", "detailed_report.json"); // �������� ���������������� ��� ����������� ������ CS1503
                 jsonContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
                 }
                 
                 if (File.Exists(txtPath))
                 {
                     var txtContent = new ByteArrayContent(await File.ReadAllBytesAsync(txtPath));
-                //                     form.Add(txtContent, "document", "detailed_report.txt"); // �������� ���������������� ��� ����������� ������ CS1503
+                //                     form.Add(txtContent, "document", "detailed_report.txt"); // �������� ���������������� ��� ����������� ������ CS1503
                 txtContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
                 }
                 
                 form.Add(new StringContent(CHAT_ID), "chat_id");
                 form.Add(new StringContent(CHAT_ID), "chat_id");
-                form.Add(new StringContent($"?? *��������� ��ר�*\n\n?? �����: {_totalThreats}\n?? ���������: {SuspiciousProcesses.Count}\n?? ������: {SuspiciousFiles.Count}"), "caption");
+                form.Add(new StringContent($"?? *��������� ��ר�*\n\n?? �����: {_totalThreats}\n?? ���������: {SuspiciousProcesses.Count}\n?? ������: {SuspiciousFiles.Count}"), "caption");
                 
                 var response = await client.PostAsync($"https://api.telegram.org/bot{BOT_TOKEN}/sendDocument", form);
                 response.EnsureSuccessStatusCode();
@@ -2757,7 +2729,100 @@ namespace RustShieldNew
             }
             catch (Exception ex) { Log("TELEGRAM", $"❌ Ошибка уведомления: {ex.Message}"); }
         }
-    }
+                // ==================== ОБНОВЛЕНИЕ СТАТУСА В ЗАГОЛОВКЕ ====================
+
+                private void UpdateScanProgressText(string text)
+{
+    // Временно отключено, так как ScanProgressText удалён из XAML
+    // Dispatcher.Invoke(() =>
+    // {
+    //     if (ScanProgressText != null)
+    //     {
+    //         ScanProgressText.Text = $"● {text}";
+    //         if (text == "Готов")
+    //             ScanProgressText.Foreground = System.Windows.Media.Brushes.LightGreen;
+    //         else if (text.Contains("Сканирование"))
+    //             ScanProgressText.Foreground = System.Windows.Media.Brushes.OrangeRed;
+    //         else
+    //             ScanProgressText.Foreground = System.Windows.Media.Brushes.Yellow;
+    //     }
+    // });
+}
+        // Обновление времени сканирования в консоли
+private void UpdateScanDuration()
+{
+   Dispatcher.Invoke(() =>
+       {
+//        if (_scanStopwatch != null && _scanStopwatch.IsRunning)
+//            ScanDurationText.Text = $"{_scanStopwatch.Elapsed.TotalSeconds:F0} сек";
+//       else if (_scanStopwatch != null)
+//           ScanDurationText.Text = $"{_scanStopwatch.Elapsed.TotalSeconds:F0} сек";
+    });
+}
+        // ==================== ГРАФИКИ CPU/RAM ====================
+
+        // Обновление графиков CPU/RAM
+
+        // private async Task UpdateSystemStatsGraph()
+// {
+//     await Task.Run(() =>
+//     {
+//         try
+//         {
+//             using var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+//             using var ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+//             
+//             float cpu = cpuCounter.NextValue();
+//             Thread.Sleep(100);
+//             cpu = cpuCounter.NextValue();
+//             
+//             float availableRam = ramCounter.NextValue();
+//             float totalRam = GetTotalRamMB();
+//             float usedRam = totalRam - availableRam;
+//             float ramPercent = (usedRam / totalRam) * 100;
+//             
+//             Dispatcher.Invoke(() =>
+//             {
+//                 CpuProgressBar.Value = cpu;
+//                 CpuPercentText.Text = $"{cpu:F0}%";
+//                 
+//                 RamProgressBar.Value = ramPercent;
+//                 RamPercentText.Text = $"{ramPercent:F0}%";
+//                 RamDetailsText.Text = $"({usedRam:F0}/{totalRam:F0} MB)";
+//             });
+//         }
+//         catch { }
+//     });
+// }
+
+
+        // Запуск обновления графиков
+//private async void StartGraphsUpdater()
+//{
+//    while (true)
+//    {
+//        await UpdateSystemStatsGraph();
+//        await Task.Delay(2000);
+//    }
+//}
+
+
+        // Обновление количества процессов в карточке
+
+// private async Task UpdateProcessCountCard()
+// {
+//     await Task.Run(() =>
+//     {
+//         int count = Process.GetProcesses().Length;
+//         Dispatcher.Invoke(() =>
+//         {
+//             if (ProcessesCountBig != null)
+//                 ProcessesCountBig.Text = count.ToString();
+//             if (ProcessesCount != null)
+//                 ProcessesCount.Text = $"Процессов: {count}";
+//         });
+//     });
+// }
 
     // ==================== МОДЕЛИ ДАННЫХ ====================
     
@@ -2883,30 +2948,29 @@ namespace RustShieldNew
         public string Path { get; set; } = "";
     }
 
-    public class EventLogEntry
-    {
-        public string EventCode { get; set; } = "";
-        public string Message { get; set; } = "";
-        public string Type { get; set; } = "";
-    }
-
-    public class FullScanReport
-    {
-        public string ScanMode { get; set; } = "";
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public TimeSpan Duration { get; set; }
-        public int TotalThreats { get; set; }
-        public string ComputerName { get; set; } = "";
-        public string UserName { get; set; } = "";
-        public string OSVersion { get; set; } = "";
-        public List<ProcessInfo> SuspiciousProcesses { get; set; } = new();
-        public List<string> SuspiciousFiles { get; set; } = new();
-        public List<RegistryItem> SuspiciousRegistry { get; set; } = new();
-        public List<USBDeviceInfo> USBDevices { get; set; } = new();
-        public List<LastActivityInfo> LastActivities { get; set; } = new();
-        public List<NetworkConnection> NetworkConnections { get; set; } = new();
-    }
+public class EventLogEntry
+{
+    public string EventCode { get; set; } = "";
+    public string Message { get; set; } = "";
+    public string Type { get; set; } = "";
 }
 
-
+public class FullScanReport
+{
+    public string ScanMode { get; set; } = "";
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
+    public TimeSpan Duration { get; set; }
+    public int TotalThreats { get; set; }
+    public string ComputerName { get; set; } = "";
+    public string UserName { get; set; } = "";
+    public string OSVersion { get; set; } = "";
+    public List<ProcessInfo> SuspiciousProcesses { get; set; } = new();
+    public List<string> SuspiciousFiles { get; set; } = new();
+    public List<RegistryItem> SuspiciousRegistry { get; set; } = new();
+    public List<USBDeviceInfo> USBDevices { get; set; } = new();
+    public List<LastActivityInfo> LastActivities { get; set; } = new();
+    public List<NetworkConnection> NetworkConnections { get; set; } = new();
+}
+    }
+}
