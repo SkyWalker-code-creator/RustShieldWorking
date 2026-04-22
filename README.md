@@ -1,7 +1,7 @@
 # 🛡️ Rust Shield Scanner
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/SkyWalker-code-creator/RustShieldWorking/blob/master/LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/)
 [![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6)](https://www.microsoft.com/windows)
 
 **Анти-чит система для обнаружения запрещённого ПО в игре Rust**
