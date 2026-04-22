@@ -1,0 +1,20 @@
+﻿# Build output
+bin/
+obj/
+publish/
+*.exe
+*.dll
+*.pdb
+
+# IDE
+.vs/
+*.user
+
+# Temporary files
+*.cache
+*.tmp
+_*
+
+# OS generated
+Thumbs.db
+desktop.ico
