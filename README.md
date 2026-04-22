@@ -79,7 +79,11 @@
 
 <div align="center">
 
-https://postimg.cc/crYLSWhg
+<div align="center">
+  <img src="https://postimg.cc/crYLSWhg/001fa429" width="80%">
+  <br>
+  <em>Главное окно RustShield Working</em>
+</div>
 
 </div>
 
